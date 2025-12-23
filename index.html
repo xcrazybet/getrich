@@ -1,1 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GetRich Betting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #3b82f6;
+        }
+        h1 { color: #10b981; text-align: center; }
+        .status {
+            background: #10b981;
+            color: black;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+    <!-- Load Supabase from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🎰 GETRICH BETTING PLATFORM</h1>
+        <div id="status" class="status">Connecting to Supabase...</div>
+        
+        <div style="text-align: center;">
+            <button class="btn" onclick="login()">User Login</button>
+            <button class="btn" onclick="placeBet()">Place Bet</button>
+            <button class="btn" onclick="viewOdds()">View Odds</button>
+        </div>
+        
+        <div id="userInfo" style="margin-top: 30px;"></div>
+        <div id="betsList" style="margin-top: 20px;"></div>
+        
+        <p style="text-align: center; margin-top: 40px; color: #94a3b8;">
+            Powered by Supabase | Project: vhahsqxbkuoumvsjotue
+        </p>
+    </div>
 
+    <script>
+        // SUPABASE CONNECTION - WILL ADD YOUR KEYS NEXT
+        const supabaseUrl = 'https://vhahsqxbkuoumvsjotue.supabase.co';
+        const supabaseKey = 'PASTE_YOUR_KEY_HERE'; // Get from next step
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Test connection
+        async function testConnection() {
+            const status = document.getElementById('status');
+            try {
+                const { data, error } = await supabase.from('bets').select('count');
+                if (error) throw error;
+                status.innerHTML = '✅ CONNECTED TO SUPABASE DATABASE!';
+                status.style.background = '#10b981';
+            } catch (error) {
+                status.innerHTML = '⚠️ Ready to connect - need API key';
+                status.style.background = '#f59e0b';
+            }
+        }
+        
+        // Initialize
+        testConnection();
+        
+        function login() {
+            alert('Login feature will be added next!');
+        }
+        
+        function placeBet() {
+            alert('Betting interface coming soon!');
+        }
+        
+        function viewOdds() {
+            alert('Live odds system loading...');
+        }
+    </script>
+</body>
+</html>
