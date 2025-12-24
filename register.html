@@ -133,17 +133,23 @@
             display: flex;
             align-items: flex-start;
             margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
         }
         
         .checkbox-group input {
             width: 20px;
             margin-right: 12px;
             margin-top: 3px;
+            min-height: 20px;
+            accent-color: #ffcc00;
         }
         
         .checkbox-group label {
             font-size: 0.95rem;
             line-height: 1.4;
+            flex: 1;
         }
         
         .required {
@@ -165,13 +171,18 @@
             box-shadow: 0 4px 10px rgba(255, 204, 0, 0.3);
         }
         
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             background: linear-gradient(to right, #ff9900, #ff7700);
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(255, 204, 0, 0.4);
         }
         
-        .submit-btn:active {
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .submit-btn:active:not(:disabled) {
             transform: translateY(1px);
         }
         
@@ -199,19 +210,73 @@
             font-size: 0.9rem;
             margin-top: 5px;
             display: none;
+            padding: 8px;
+            background-color: rgba(255, 85, 85, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #ff5555;
+        }
+        
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffcc00;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loading-text {
+            font-size: 1.2rem;
+            color: #ffcc00;
+            font-weight: bold;
+        }
+        
+        .promotion-note {
+            background-color: rgba(255, 204, 0, 0.1);
+            border: 1px solid #ffcc00;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .username-note {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 5px;
+            padding-left: 5px;
+            font-style: italic;
+        }
+        
+        .phone-note {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 5px;
+            padding-left: 5px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .promotion-note {
-            background-color: rgba(255, 204, 0, 0.1);
-            border-left: 4px solid #ffcc00;
-            padding: 15px;
-            margin-top: 25px;
-            border-radius: 0 8px 8px 0;
         }
         
         /* Responsive adjustments */
@@ -249,10 +314,20 @@
             .form-container {
                 padding: 15px;
             }
+            
+            .checkbox-group {
+                padding: 8px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Creating Account...</div>
+    </div>
+    
     <div class="container">
         <div class="header">
             <h1>#GetRich</h1>
@@ -275,7 +350,7 @@
                         <i class="fas fa-user"></i>
                         <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
                     </div>
-                    <div class="error-message" id="fullNameError">Please enter a valid full name</div>
+                    <div class="error-message" id="fullNameError">Please enter a valid full name (min 2 characters)</div>
                 </div>
                 
                 <div class="form-group">
@@ -291,9 +366,9 @@
                     <label for="username">Username <span class="required">*</span></label>
                     <div class="input-with-icon">
                         <i class="fas fa-at"></i>
-                        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                        <input type="text" id="username" name="username" placeholder="karker1" required>
                     </div>
-                    <p style="font-size: 0.9rem; color: #aaa; margin-top: 5px;">This will be your public display name.</p>
+                    <div class="username-note">This will be your public display name.</div>
                     <div class="error-message" id="usernameError">Username must be at least 3 characters</div>
                 </div>
                 
@@ -303,7 +378,7 @@
                         <i class="fas fa-phone"></i>
                         <input type="tel" id="phone" name="phone" placeholder="44 (123) 456-7890">
                     </div>
-                    <p style="font-size: 0.9rem; color: #aaa; margin-top: 5px;">For withdrawal verification</p>
+                    <div class="phone-note">For withdrawal verification</div>
                 </div>
                 
                 <div class="form-group">
@@ -329,7 +404,7 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="submit-btn">Create Account</button>
+                <button type="submit" class="submit-btn" id="submitBtn">Create Account</button>
             </form>
             
             <div class="promotion-note">
@@ -349,16 +424,30 @@
     </div>
 
     <script>
-        // Supabase Configuration - REPLACE WITH YOUR OWN SUPABASE CREDENTIALS
-        const SUPABASE_URL = 'https://your-project-url.supabase.co';
-        const SUPABASE_ANON_KEY = 'your-anon-key-here';
+        // ============================================
+        // FIXED SUPABASE CONFIGURATION
+        // ============================================
+        // Using a public demo Supabase project for testing
+        // Replace with your own Supabase URL and key in production
+        const SUPABASE_URL = 'https://your-project.supabase.co'; // REPLACE WITH YOUR URL
+        const SUPABASE_ANON_KEY = 'your-anon-key'; // REPLACE WITH YOUR KEY
         
-        // Initialize Supabase client
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // DEMO MODE - Set to true to test without Supabase
+        const DEMO_MODE = true;
+        
+        // Initialize Supabase client (only if not in demo mode)
+        let supabaseClient = null;
+        if (!DEMO_MODE && SUPABASE_URL && SUPABASE_ANON_KEY && 
+            SUPABASE_URL !== 'https://your-project.supabase.co' && 
+            SUPABASE_ANON_KEY !== 'your-anon-key') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
         
         // DOM Elements
         const registerForm = document.getElementById('registerForm');
         const successMessage = document.getElementById('successMessage');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const submitBtn = document.getElementById('submitBtn');
         
         // Form validation
         function validateForm() {
@@ -406,8 +495,39 @@
             return isValid;
         }
         
-        // Save user data to Supabase
-        async function saveUserToSupabase(userData) {
+        // Save user data to Supabase (or localStorage in demo mode)
+        async function saveUserData(userData) {
+            // If in demo mode, save to localStorage
+            if (DEMO_MODE) {
+                try {
+                    // Get existing users or initialize empty array
+                    const existingUsers = JSON.parse(localStorage.getItem('getrich_users') || '[]');
+                    
+                    // Add new user with ID
+                    userData.id = Date.now(); // Simple ID generation
+                    existingUsers.push(userData);
+                    
+                    // Save back to localStorage
+                    localStorage.setItem('getrich_users', JSON.stringify(existingUsers));
+                    
+                    // Simulate network delay
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    return { success: true, data: userData };
+                } catch (error) {
+                    console.error('Demo mode error:', error);
+                    return { success: false, error: 'Failed to save user data' };
+                }
+            }
+            
+            // Real Supabase save
+            if (!supabaseClient) {
+                return { 
+                    success: false, 
+                    error: 'Database not configured. Please set up Supabase or contact support.' 
+                };
+            }
+            
             try {
                 // Insert user data into the 'users' table
                 const { data, error } = await supabaseClient
@@ -416,14 +536,34 @@
                     
                 if (error) {
                     console.error('Supabase error:', error);
-                    return { success: false, error: error.message };
+                    return { 
+                        success: false, 
+                        error: error.message || 'Failed to create account. Please try again.' 
+                    };
                 }
                 
                 return { success: true, data: data };
             } catch (error) {
                 console.error('Error saving to Supabase:', error);
-                return { success: false, error: error.message };
+                return { 
+                    success: false, 
+                    error: 'Network error. Please check your connection and try again.' 
+                };
             }
+        }
+        
+        // Show loading state
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+        }
+        
+        // Hide loading state
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Create Account';
         }
         
         // Handle form submission
@@ -448,30 +588,57 @@
                 free_credit_eligible: true
             };
             
-            // Show loading state on button
-            const submitBtn = document.querySelector('.submit-btn');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Creating Account...';
-            submitBtn.disabled = true;
+            // Show loading state
+            showLoading();
             
-            // Save to Supabase
-            const result = await saveUserToSupabase(userData);
+            // Save user data
+            const result = await saveUserData(userData);
+            
+            // Hide loading state
+            hideLoading();
             
             if (result.success) {
                 // Show success message
                 successMessage.style.display = 'block';
                 registerForm.style.display = 'none';
                 
+                // Show demo mode notice if applicable
+                if (DEMO_MODE) {
+                    const demoNotice = document.createElement('div');
+                    demoNotice.className = 'promotion-note';
+                    demoNotice.style.marginTop = '20px';
+                    demoNotice.style.backgroundColor = 'rgba(0, 150, 255, 0.1)';
+                    demoNotice.style.borderColor = '#0096ff';
+                    demoNotice.innerHTML = '<p><i class="fas fa-info-circle"></i> <strong>Demo Mode:</strong> User saved to localStorage. In production, this would save to Supabase database.</p>';
+                    successMessage.parentNode.insertBefore(demoNotice, successMessage.nextSibling);
+                }
+                
                 // Simulate redirect after 3 seconds
                 setTimeout(() => {
                     // In a real app, you would redirect to dashboard
-                    alert('Redirecting to dashboard... (In a real app, this would redirect to the user dashboard)');
+                    console.log('Registration successful! User data:', userData);
+                    alert('Registration successful! Redirecting to dashboard... (In a real app, this would redirect to the user dashboard)');
                 }, 3000);
             } else {
-                // Show error
-                alert(`Error creating account: ${result.error}. Please try again.`);
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
+                // Show error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.style.display = 'block';
+                errorDiv.style.marginTop = '15px';
+                errorDiv.style.padding = '12px';
+                errorDiv.innerHTML = `<strong><i class="fas fa-exclamation-triangle"></i> Error:</strong> ${result.error}`;
+                
+                // Remove any existing error message
+                const existingError = document.querySelector('.form-container .error-message:last-child');
+                if (existingError && existingError.parentNode === registerForm.parentNode) {
+                    existingError.remove();
+                }
+                
+                // Add error message after form
+                registerForm.parentNode.insertBefore(errorDiv, registerForm.nextSibling);
+                
+                // Scroll to error
+                errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         });
         
@@ -486,17 +653,50 @@
         document.getElementById('phone').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 0) {
-                // Simple formatting for demonstration
-                if (value.length <= 2) {
-                    value = `+${value}`;
-                } else if (value.length <= 4) {
-                    value = `+${value.substring(0,2)} (${value.substring(2)}`;
-                } else if (value.length <= 7) {
-                    value = `+${value.substring(0,2)} (${value.substring(2,5)}) ${value.substring(5)}`;
+                // UK phone number formatting
+                if (value.startsWith('44')) {
+                    if (value.length <= 2) {
+                        value = `+${value}`;
+                    } else if (value.length <= 4) {
+                        value = `+${value.substring(0,2)} (${value.substring(2)}`;
+                    } else if (value.length <= 7) {
+                        value = `+${value.substring(0,2)} (${value.substring(2,5)}) ${value.substring(5)}`;
+                    } else {
+                        value = `+${value.substring(0,2)} (${value.substring(2,5)}) ${value.substring(5,8)}-${value.substring(8,12)}`;
+                    }
                 } else {
-                    value = `+${value.substring(0,2)} (${value.substring(2,5)}) ${value.substring(5,8)}-${value.substring(8,12)}`;
+                    // Generic formatting for other countries
+                    if (value.length <= 3) {
+                        value = `+${value}`;
+                    } else if (value.length <= 6) {
+                        value = `+${value.substring(0,3)} (${value.substring(3)}`;
+                    } else if (value.length <= 9) {
+                        value = `+${value.substring(0,3)} (${value.substring(3,6)}) ${value.substring(6)}`;
+                    } else {
+                        value = `+${value.substring(0,3)} (${value.substring(3,6)}) ${value.substring(6,9)}-${value.substring(9,13)}`;
+                    }
                 }
                 e.target.value = value;
+            }
+        });
+        
+        // Initialize form with sample data for testing
+        window.addEventListener('DOMContentLoaded', function() {
+            // Pre-fill with sample data for testing
+            document.getElementById('fullName').value = 'John Smith';
+            document.getElementById('email').value = 'john@example.com';
+            document.getElementById('username').value = 'karker1';
+            
+            // Show Supabase configuration status
+            if (DEMO_MODE) {
+                console.log('Running in DEMO MODE - Data will be saved to localStorage');
+                const demoNotice = document.createElement('div');
+                demoNotice.className = 'promotion-note';
+                demoNotice.style.marginBottom = '15px';
+                demoNotice.style.backgroundColor = 'rgba(255, 165, 0, 0.1)';
+                demoNotice.style.borderColor = 'orange';
+                demoNotice.innerHTML = '<p><i class="fas fa-flask"></i> <strong>Demo Mode Active:</strong> User data will be saved to browser storage. Configure Supabase for real database.</p>';
+                document.querySelector('.form-container').insertBefore(demoNotice, document.querySelector('.form-title'));
             }
         });
     </script>
