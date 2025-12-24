@@ -1,924 +1,135 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GetRich - Premium Betting Platform</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --primary: #10b981;
-            --primary-dark: #059669;
-            --primary-light: #34d399;
-            --secondary: #0f172a;
-            --accent: #f59e0b;
-            --danger: #ef4444;
-            --success: #10b981;
-            --text: #ffffff;
-            --text-muted: #94a3b8;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            --gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a2e1d 0%, #0f172a 100%);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Navigation */
-        .navbar {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--primary);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: var(--shadow);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo h1 {
-            font-size: 2.2rem;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
-
-        .badge {
-            background: var(--accent);
-            color: #000;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text);
-            text-decoration: none;
-            font-weight: 600;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-links a:hover {
-            background: var(--glass-bg);
-            transform: translateY(-2px);
-        }
-
-        .nav-links a.active {
-            background: var(--gradient);
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-        }
-
-        .user-balance {
-            background: var(--gradient);
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: var(--gradient);
-            border-radius: 20px;
-            padding: 4rem;
-            margin-bottom: 3rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(255,255,255,0.1)" d="M0,0 L100,0 L100,100 Z"/></svg>');
-            background-size: cover;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero h2 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .hero-stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 3rem;
-        }
-
-        .stat {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            padding: 1.5rem;
-            border-radius: 15px;
-            min-width: 150px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            display: block;
-            background: linear-gradient(45deg, #fff, #f0f0f0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            margin-bottom: 3rem;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .section-header h3 {
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .view-all {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .view-all:hover {
-            transform: translateX(5px);
-        }
-
-        .action-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .action-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 2rem;
-            text-decoration: none;
-            color: var(--text);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .action-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.2);
-        }
-
-        .action-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Live Events */
-        .events-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .event-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-        }
-
-        .event-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
-        }
-
-        .event-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .sport-badge {
-            background: var(--gradient);
-            color: white;
-            padding: 0.3rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .live-badge {
-            background: var(--danger);
-            color: white;
-            padding: 0.3rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            animation: pulse 1.5s infinite;
-        }
-
-        .teams {
-            text-align: center;
-            margin: 1.5rem 0;
-        }
-
-        .team {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin: 0.5rem 0;
-        }
-
-        .vs {
-            color: var(--primary);
-            font-weight: 800;
-            margin: 0.5rem 0;
-        }
-
-        .odds {
-            display: flex;
-            justify-content: space-around;
-            margin: 1.5rem 0;
-        }
-
-        .odd-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            min-width: 100px;
-        }
-
-        .odd-btn:hover {
-            background: var(--gradient);
-            transform: scale(1.05);
-        }
-
-        /* Recent Bets */
-        .bets-list {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 2rem;
-            margin-top: 2rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .bet-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.2rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            border-left: 4px solid var(--primary);
-            transition: all 0.3s;
-        }
-
-        .bet-item:hover {
-            transform: translateX(5px);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .bet-status {
-            padding: 0.3rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .status-won {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--success);
-        }
-
-        .status-pending {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--accent);
-        }
-
-        /* Footer */
-        .footer {
-            background: rgba(15, 23, 42, 0.95);
-            border-top: 2px solid var(--primary);
-            padding: 3rem 2rem;
-            margin-top: 4rem;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .footer-section h4 {
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
-        }
-
-        .footer-section a {
-            display: block;
-            color: var(--text-muted);
-            text-decoration: none;
-            margin-bottom: 0.8rem;
-            transition: all 0.3s;
-        }
-
-        .footer-section a:hover {
-            color: var(--primary);
-            transform: translateX(5px);
-        }
-
-        /* Animations */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .floating {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .hero h2 {
-                font-size: 2.5rem;
-            }
-            
-            .hero-stats {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .action-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .events-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--gradient);
-            border-radius: 5px;
-        }
-
-        /* Loading Animation */
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-left-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <h1>GETRICH</h1>
-                <span class="badge">LIVE</span>
-            </div>
-            
-            <div class="nav-links">
-                <a href="index.html" class="active"><i class="fas fa-home"></i> Home</a>
-                <a href="sports.html"><i class="fas fa-futbol"></i> Sports</a>
-                <a href="live.html"><i class="fas fa-broadcast-tower"></i> Live</a>
-                <a href="casino.html"><i class="fas fa-dice"></i> Casino</a>
-                <a href="mybets.html"><i class="fas fa-history"></i> My Bets</a>
-                <a href="wallet.html"><i class="fas fa-wallet"></i> Wallet</a>
-                <div class="user-balance" id="userBalance">
-                    <i class="fas fa-coins"></i>
-                    <span id="balanceAmount">$1,000.00</span>
-                </div>
-                <div id="authButtons">
-                    <a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="container">
-        <!-- Hero Section -->
-        <section class="hero floating">
-            <div class="hero-content">
-                <h2>WIN BIG WITH GETRICH</h2>
-                <p>The Premier Destination for Sports Betting & Casino Games</p>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <span class="stat-value" id="liveEvents">24</span>
-                        <span class="stat-label">Live Events</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value" id="activeUsers">5.2K</span>
-                        <span class="stat-label">Active Users</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value" id="totalPayout">$2.4M</span>
-                        <span class="stat-label">Paid Out Today</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Quick Actions -->
-        <section class="quick-actions">
-            <div class="section-header">
-                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-            </div>
-            <div class="action-grid">
-                <a href="live.html" class="action-card">
-                    <div class="action-icon">🎯</div>
-                    <h4>Live Betting</h4>
-                    <p>Bet on ongoing matches</p>
-                </a>
-                
-                <a href="deposit.html" class="action-card">
-                    <div class="action-icon">💰</div>
-                    <h4>Instant Deposit</h4>
-                    <p>Add funds in seconds</p>
-                </a>
-                
-                <a href="promotions.html" class="action-card">
-                    <div class="action-icon">🎁</div>
-                    <h4>Promotions</h4>
-                    <p>Get 100% bonus</p>
-                </a>
-                
-                <a href="jackpot.html" class="action-card">
-                    <div class="action-icon">🏆</div>
-                    <h4>Jackpot Games</h4>
-                    <p>Win massive prizes</p>
-                </a>
-            </div>
-        </section>
-
-        <!-- Live Events -->
-        <section class="live-events">
-            <div class="section-header">
-                <h3><i class="fas fa-fire"></i> Hot Events Right Now</h3>
-                <a href="sports.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="events-grid" id="liveEventsGrid">
-                <!-- Events loaded by JavaScript -->
-                <div class="loading">
-                    <div class="spinner"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Featured Sports -->
-        <section class="quick-actions">
-            <div class="section-header">
-                <h3><i class="fas fa-star"></i> Featured Sports</h3>
-            </div>
-            <div class="action-grid">
-                <a href="football.html" class="action-card">
-                    <div class="action-icon">⚽</div>
-                    <h4>Football</h4>
-                    <p>Premier League, Champions League</p>
-                </a>
-                
-                <a href="basketball.html" class="action-card">
-                    <div class="action-icon">🏀</div>
-                    <h4>Basketball</h4>
-                    <p>NBA, EuroLeague</p>
-                </a>
-                
-                <a href="tennis.html" class="action-card">
-                    <div class="action-icon">🎾</div>
-                    <h4>Tennis</h4>
-                    <p>Grand Slams, ATP Tour</p>
-                </a>
-                
-                <a href="esports.html" class="action-card">
-                    <div class="action-icon">🎮</div>
-                    <h4>Esports</h4>
-                    <p>CS2, Dota 2, LoL</p>
-                </a>
-            </div>
-        </section>
-
-        <!-- Recent Wins -->
-        <section class="recent-bets">
-            <div class="section-header">
-                <h3><i class="fas fa-trophy"></i> Recent Big Wins</h3>
-            </div>
-            <div class="bets-list" id="recentWins">
-                <div class="bet-item">
-                    <div>
-                        <strong>David M.</strong> won
-                        <span style="color: var(--primary); font-weight: bold;"> $12,450</span>
-                    </div>
-                    <div>on Football ⚽</div>
-                    <div class="bet-status status-won">WON</div>
-                </div>
-                <div class="bet-item">
-                    <div>
-                        <strong>Sarah K.</strong> won
-                        <span style="color: var(--primary); font-weight: bold;"> $8,320</span>
-                    </div>
-                    <div>on Tennis 🎾</div>
-                    <div class="bet-status status-won">WON</div>
-                </div>
-                <div class="bet-item">
-                    <div>
-                        <strong>Mike R.</strong> won
-                        <span style="color: var(--primary); font-weight: bold;"> $5,150</span>
-                    </div>
-                    <div>on Basketball 🏀</div>
-                    <div class="bet-status status-won">WON</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Connection Status -->
-        <div class="connection-status" style="background: var(--glass-bg); padding: 1rem; border-radius: 10px; margin-top: 2rem; text-align: center;">
-            <div id="connectionStatus" style="color: var(--primary); font-weight: bold;">
-                <i class="fas fa-check-circle"></i> Connected to Supabase Database
-            </div>
-            <small style="color: var(--text-muted);">Project ID: vhahagokkaonmytjette • Live Updates Active</small>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>GETRICH</h4>
-                <p>The ultimate betting experience with the best odds and instant payouts.</p>
-                <p style="margin-top: 1rem;">
-                    <i class="fas fa-shield-alt" style="color: var(--primary);"></i>
-                    <strong>100% Secure & Licensed</strong>
-                </p>
-            </div>
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <a href="sports.html"><i class="fas fa-chevron-right"></i> All Sports</a>
-                <a href="live.html"><i class="fas fa-chevron-right"></i> Live Betting</a>
-                <a href="promotions.html"><i class="fas fa-chevron-right"></i> Promotions</a>
-                <a href="help.html"><i class="fas fa-chevron-right"></i> Help Center</a>
-            </div>
-            <div class="footer-section">
-                <h4>Legal</h4>
-                <a href="#"><i class="fas fa-gavel"></i> Terms & Conditions</a>
-                <a href="#"><i class="fas fa-user-shield"></i> Privacy Policy</a>
-                <a href="#"><i class="fas fa-hand-holding-heart"></i> Responsible Gaming</a>
-                <a href="#"><i class="fas fa-id-card"></i> KYC Verification</a>
-            </div>
-            <div class="footer-section">
-                <h4>Contact & Support</h4>
-                <a href="#"><i class="fas fa-headset"></i> 24/7 Live Support</a>
-                <a href="#"><i class="fas fa-envelope"></i> support@getrich.com</a>
-                <a href="#"><i class="fas fa-phone"></i> +1-800-GETRICH</a>
-                <div style="margin-top: 1rem;">
-                    <p style="color: var(--primary); font-weight: bold;">
-                        <i class="fas fa-database"></i> Powered by Supabase
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Initialize Supabase
-        const SUPABASE_URL = 'https://vhahagokkaonmytjette.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8';
+// Authentication Functions
+import { supabase } from './supabase.js'
+
+// Check authentication
+async function checkAuth() {
+    const { data: { session } } = await supabase.auth.getSession()
+    return session
+}
+
+// Login function
+async function login(email, password) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+    })
+    
+    if (error) throw error
+    return data
+}
+
+// Register function
+async function register(email, password, userData) {
+    const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+            data: userData
+        }
+    })
+    
+    if (error) throw error
+    
+    // Create profile if needed
+    if (data.user) {
+        await createUserProfile(data.user, userData)
+    }
+    
+    return data
+}
+
+// Create user profile
+async function createUserProfile(user, userData) {
+    const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single()
+    
+    if (!existingProfile) {
+        const { error } = await supabase
+            .from('profiles')
+            .insert([{
+                id: user.id,
+                email: user.email,
+                full_name: userData?.full_name || '',
+                username: userData?.username || '',
+                user_type: 'regular',
+                wallet_balance: 0.00,
+                locked_balance: 0.00
+            }])
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        // Load live events
-        async function loadLiveEvents() {
-            try {
-                const { data: events, error } = await supabase
-                    .from('events')
-                    .select(`
-                        *,
-                        sports: sport_id (name, icon)
-                    `)
-                    .order('created_at', { ascending: false })
-                    .limit(6);
-                
-                const grid = document.getElementById('liveEventsGrid');
-                
-                if (error) {
-                    grid.innerHTML = `
-                        <div class="event-card" style="text-align: center; padding: 3rem;">
-                            <h3>Sample Events Loaded</h3>
-                            <p>Database connection active</p>
-                        </div>
-                    `;
-                    // Load sample events
-                    loadSampleEvents();
-                    return;
-                }
-                
-                if (events && events.length > 0) {
-                    let html = '';
-                    events.forEach(event => {
-                        const sport = event.sports || { name: 'Sports', icon: '🏆' };
-                        html += `
-                            <div class="event-card">
-                                <div class="event-header">
-                                    <span class="sport-badge">${sport.icon} ${sport.name}</span>
-                                    <span class="live-badge">LIVE</span>
-                                </div>
-                                <div class="teams">
-                                    <div class="team">${event.team_a}</div>
-                                    <div class="vs">VS</div>
-                                    <div class="team">${event.team_b}</div>
-                                </div>
-                                <div class="odds">
-                                    <button class="odd-btn" onclick="placeBet(${event.id}, 'team_a', ${event.odds_a})">
-                                        ${event.team_a}<br><strong>${event.odds_a}</strong>
-                                    </button>
-                                    <button class="odd-btn" onclick="placeBet(${event.id}, 'draw', ${event.odds_draw || 3.0})">
-                                        DRAW<br><strong>${event.odds_draw || 3.0}</strong>
-                                    </button>
-                                    <button class="odd-btn" onclick="placeBet(${event.id}, 'team_b', ${event.odds_b})">
-                                        ${event.team_b}<br><strong>${event.odds_b}</strong>
-                                    </button>
-                                </div>
-                                <button class="odd-btn" style="width: 100%; background: var(--gradient); margin-top: 1rem;" 
-                                        onclick="quickBet(${event.id})">
-                                    <i class="fas fa-bolt"></i> QUICK BET
-                                </button>
-                            </div>
-                        `;
-                    });
-                    grid.innerHTML = html;
-                } else {
-                    loadSampleEvents();
-                }
-                
-            } catch (error) {
-                console.error('Error loading events:', error);
-                loadSampleEvents();
-            }
+        if (error && !error.message.includes('duplicate key')) {
+            console.error('Error creating profile:', error)
         }
-        
-        function loadSampleEvents() {
-            const sampleEvents = [
-                { id: 1, team_a: 'Real Madrid', team_b: 'Barcelona', odds_a: 2.1, odds_b: 3.2, odds_draw: 3.5, sport: 'Football' },
-                { id: 2, team_a: 'Lakers', team_b: 'Celtics', odds_a: 1.8, odds_b: 2.2, sport: 'Basketball' },
-                { id: 3, team_a: 'Djokovic', team_b: 'Nadal', odds_a: 1.9, odds_b: 2.1, sport: 'Tennis' }
-            ];
-            
-            let html = '';
-            sampleEvents.forEach(event => {
-                html += `
-                    <div class="event-card">
-                        <div class="event-header">
-                            <span class="sport-badge">${event.sport === 'Football' ? '⚽' : event.sport === 'Basketball' ? '🏀' : '🎾'} ${event.sport}</span>
-                            <span class="live-badge">LIVE</span>
-                        </div>
-                        <div class="teams">
-                            <div class="team">${event.team_a}</div>
-                            <div class="vs">VS</div>
-                            <div class="team">${event.team_b}</div>
-                        </div>
-                        <div class="odds">
-                            <button class="odd-btn" onclick="placeBet(${event.id}, 'team_a', ${event.odds_a})">
-                                ${event.team_a}<br><strong>${event.odds_a}</strong>
-                            </button>
-                            <button class="odd-btn" onclick="placeBet(${event.id}, 'draw', ${event.odds_draw || 3.0})">
-                                DRAW<br><strong>${event.odds_draw || 3.0}</strong>
-                            </button>
-                            <button class="odd-btn" onclick="placeBet(${event.id}, 'team_b', ${event.odds_b})">
-                                ${event.team_b}<br><strong>${event.odds_b}</strong>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('liveEventsGrid').innerHTML = html;
+    }
+}
+
+// Logout function
+async function logout() {
+    await supabase.auth.signOut()
+    window.location.href = 'index.html'
+}
+
+// Get current user
+async function getCurrentUser() {
+    const { data: { user } } = await supabase.auth.getUser()
+    return user
+}
+
+// Get user profile
+async function getUserProfile() {
+    const user = await getCurrentUser()
+    if (!user) return null
+    
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+    
+    return profile
+}
+
+// Update profile
+async function updateProfile(updates) {
+    const user = await getCurrentUser()
+    if (!user) throw new Error('Not authenticated')
+    
+    const { data, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.id)
+    
+    if (error) throw error
+    return data
+}
+
+// Export functions
+window.login = login
+window.register = register
+window.logout = logout
+window.checkAuth = checkAuth
+window.getCurrentUser = getCurrentUser
+window.getUserProfile = getUserProfile
+window.updateProfile = updateProfile
+
+// Auth state listener
+supabase.auth.onAuthStateChange((event, session) => {
+    console.log('Auth state changed:', event)
+    
+    // Update UI based on auth state
+    const loginBtn = document.getElementById('login-btn')
+    const logoutBtn = document.getElementById('logout-btn')
+    
+    if (loginBtn && logoutBtn) {
+        if (session) {
+            loginBtn.style.display = 'none'
+            logoutBtn.style.display = 'inline-flex'
+            logoutBtn.onclick = logout
+        } else {
+            loginBtn.style.display = 'inline-flex'
+            logoutBtn.style.display = 'none'
         }
-        
-        // Betting functions
-        function placeBet(eventId, betType, odds) {
-            const amount = prompt(`Enter bet amount (Odds: ${odds}x):`, '10');
-            if (amount && !isNaN(amount) && amount > 0) {
-                const potentialWin = (amount * odds).toFixed(2);
-                alert(`✅ Bet placed!\nAmount: $${amount}\nOdds: ${odds}x\nPotential Win: $${potentialWin}`);
-                
-                // Update user balance
-                const balanceEl = document.getElementById('balanceAmount');
-                let currentBalance = parseFloat(balanceEl.textContent.replace('$', '').replace(',', ''));
-                currentBalance -= parseFloat(amount);
-                balanceEl.textContent = '$' + currentBalance.toFixed(2);
-            }
-        }
-        
-        function quickBet(eventId) {
-            const quickAmounts = [10, 25, 50, 100];
-            const amount = prompt(`Quick Bet Amounts:\n${quickAmounts.map(a => `$${a}`).join(' | ')}\n\nEnter amount:`, '25');
-            if (amount && !isNaN(amount) && amount > 0) {
-                alert(`✅ Quick bet of $${amount} placed! Good luck!`);
-            }
-        }
-        
-        // Check authentication
-        async function checkAuth() {
-            const { data: { user } } = await supabase.auth.getUser();
-            const authButtons = document.getElementById('authButtons');
-            const userBalance = document.getElementById('userBalance');
-            
-            if (user) {
-                authButtons.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <span>Welcome, ${user.email.split('@')[0]}</span>
-                        <button onclick="logout()" style="background: var(--danger); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </button>
-                    </div>
-                `;
-                userBalance.style.display = 'flex';
-            } else {
-                userBalance.style.display = 'none';
-            }
-        }
-        
-        async function logout() {
-            await supabase.auth.signOut();
-            location.reload();
-        }
-        
-        // Animate stats
-        function animateStats() {
-            const stats = {
-                liveEvents: 24,
-                activeUsers: 5200,
-                totalPayout: 2400000
-            };
-            
-            Object.keys(stats).forEach(stat => {
-                const element = document.getElementById(stat);
-                if (element) {
-                    let current = 0;
-                    const target = stats[stat];
-                    const increment = target / 50;
-                    const timer = setInterval(() => {
-                        current += increment;
-                        if (current >= target) {
-                            current = target;
-                            clearInterval(timer);
-                        }
-                        element.textContent = stat === 'totalPayout' ? 
-                            '$' + Math.floor(current).toLocaleString() : 
-                            Math.floor(current).toLocaleString();
-                    }, 30);
-                }
-            });
-        }
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('GetRich Platform Loaded');
-            checkAuth();
-            loadLiveEvents();
-            animateStats();
-            
-            // Update connection status
-            document.getElementById('connectionStatus').innerHTML = 
-                '<i class="fas fa-check-circle"></i> Connected to Supabase • Live Data Active';
-        });
-        
-        // Real-time updates
-        supabase
-            .channel('public:events')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'events' }, payload => {
-                console.log('New event added:', payload.new);
-                loadLiveEvents();
-            })
-            .subscribe();
-    </script>
-</body>
-</html>
+    }
+})
