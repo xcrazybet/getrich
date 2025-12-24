@@ -1,41 +1,173 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>GetRich Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetRich - Betting Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js" defer></script>
+    <script src="app.js" defer></script>
 </head>
 <body>
-    <h1>GETRICH BETTING - TEST PAGE</h1>
-    <p>Project ID: <strong id="pid">vhahsqxbkuoumvsjotue</strong></p>
-    <p>Status: <span id="status">Loading...</span></p>
-    
-    <script>
-        // Display correct project ID
-        document.getElementById('pid').textContent = 'vhahsqxbkuoumvsjotue';
-        
-        // Simple connection test
-        const SUPABASE_URL = 'https://vhahsqxbkuoumvsjotue.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhzcXhia3VvdW12c2pvdHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8';
-        
-        async function test() {
-            try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/', {
-                    headers: { 'apikey': SUPABASE_KEY }
-                });
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h1>🎰 GetRich</h1>
+                <span class="badge">BETA</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="index.html" class="active">🏠 Dashboard</a>
+                <a href="sports.html">⚽ Sports</a>
+                <a href="events.html">🎯 Live Events</a>
+                <a href="mybets.html">📜 My Bets</a>
+                <a href="wallet.html">💰 Wallet</a>
+                <div id="auth-section">
+                    <!-- Will be filled by JavaScript -->
+                    <a href="login.html" class="btn-login">🔐 Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Welcome to GetRich Betting</h2>
+                <p>Place bets on sports, esports, and casino games with the best odds!</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="live-events">0</span>
+                        <span class="stat-label">Live Events</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="total-users">0</span>
+                        <span class="stat-label">Active Users</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="total-bets">0</span>
+                        <span class="stat-label">Bets Today</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="action-grid">
+                <a href="events.html" class="action-card">
+                    <div class="action-icon">🎯</div>
+                    <h4>Place Bet</h4>
+                    <p>Bet on live events</p>
+                </a>
                 
-                if (response.ok) {
-                    document.getElementById('status').innerHTML = 
-                        '<span style="color: green;">✅ CONNECTED TO SUPABASE</span>';
-                } else {
-                    document.getElementById('status').innerHTML = 
-                        '<span style="color: red;">❌ Connection failed</span>';
-                }
+                <a href="wallet.html" class="action-card">
+                    <div class="action-icon">💰</div>
+                    <h4>Deposit Funds</h4>
+                    <p>Add money to wallet</p>
+                </a>
+                
+                <a href="mybets.html" class="action-card">
+                    <div class="action-icon">📜</div>
+                    <h4>My Bets</h4>
+                    <p>View bet history</p>
+                </a>
+                
+                <a href="profile.html" class="action-card">
+                    <div class="action-icon">👤</div>
+                    <h4>Profile</h4>
+                    <p>Account settings</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Live Events Preview -->
+        <section class="live-events">
+            <div class="section-header">
+                <h3>🔥 Live Now</h3>
+                <a href="events.html" class="view-all">View All →</a>
+            </div>
+            <div class="events-grid" id="live-events-list">
+                <!-- Events will be loaded by JavaScript -->
+                <div class="loading">Loading events...</div>
+            </div>
+        </section>
+
+        <!-- Recent Bets -->
+        <section class="recent-bets">
+            <div class="section-header">
+                <h3>📊 Recent Activity</h3>
+                <a href="mybets.html" class="view-all">View All →</a>
+            </div>
+            <div class="bets-list" id="recent-bets">
+                <!-- Bets will be loaded by JavaScript -->
+                <div class="loading">Loading your bets...</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>GetRich Betting</h4>
+                <p>© 2024 GetRich. All rights reserved.</p>
+                <p>For responsible gambling, visit gambleaware.org</p>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Responsible Gaming</a>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footer-section">
+                <p class="supabase-info">
+                    Powered by <strong>Supabase</strong><br>
+                    Project: <span id="project-display">vhahagokkaonmytjette</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Display project ID
+            document.getElementById('project-display').textContent = 
+                window.location.hostname.includes('github') ? 'vhahagokkaonmytjette' : 'Connected';
+            
+            // Check auth status
+            checkAuthStatus();
+            
+            // Load dashboard data
+            loadDashboardData();
+        });
+        
+        async function loadDashboardData() {
+            try {
+                // This will be implemented in app.js
+                console.log('Loading dashboard data...');
+                
+                // For now, show sample data
+                document.getElementById('live-events').textContent = '12';
+                document.getElementById('total-users').textContent = '1,234';
+                document.getElementById('total-bets').textContent = '5,678';
+                
             } catch (error) {
-                document.getElementById('status').innerHTML = 
-                    '<span style="color: red;">❌ Error: ' + error.message + '</span>';
+                console.error('Error loading dashboard:', error);
             }
         }
-        
-        test();
     </script>
 </body>
 </html>
