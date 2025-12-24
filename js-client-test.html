@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>🚀 Supabase JS Client Test</h1>
+    
+    <div id="status" style="padding:15px; background:#e8f4fd; border-radius:5px;">
+        Loading Supabase client...
+    </div>
+    
+    <div style="margin-top:20px;">
+        <h3>Quick Sign Up Test:</h3>
+        Email: <input type="email" id="email" value="test" + Date.now() + "@test.com"><br>
+        Password: <input type="password" id="password" value="test123456"><br>
+        <button onclick="signUpTest()">Test Sign Up</button>
+        <button onclick="checkSession()">Check Session</button>
+    </div>
+    
+    <script>
+        // Initialize Supabase
+        const supabaseUrl = 'https://vhahagokkaonmytjette.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8'
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+        
+        // Update status
+        document.getElementById('status').innerHTML = 
+            '✅ Supabase client created successfully!<br>Testing connection...'
+        
+        async function signUpTest() {
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            
+            document.getElementById('status').innerHTML = 'Creating user...'
+            
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: 'Test User',
+                            username: 'testuser' + Date.now()
+                        }
+                    }
+                })
+                
+                if (error) {
+                    document.getElementById('status').innerHTML = 
+                        '❌ Error: ' + error.message + '<br><br>' +
+                        'Try different email or check Supabase settings.'
+                } else {
+                    document.getElementById('status').innerHTML = 
+                        '✅ User created!<br>' +
+                        'Email: ' + data.user.email + '<br>' +
+                        'ID: ' + data.user.id + '<br><br>' +
+                        'Now check your Supabase dashboard Users section!'
+                }
+            } catch (error) {
+                document.getElementById('status').innerHTML = 
+                    '❌ Exception: ' + error.message
+            }
+        }
+        
+        async function checkSession() {
+            const { data: { session }, error } = await supabase.auth.getSession()
+            
+            if (error) {
+                document.getElementById('status').innerHTML = 
+                    '❌ Session error: ' + error.message
+            } else if (session) {
+                document.getElementById('status').innerHTML = 
+                    '✅ Session exists! User: ' + session.user.email
+            } else {
+                document.getElementById('status').innerHTML = 
+                    'ℹ️ No active session'
+            }
+        }
+        
+        // Try to get session on load
+        checkSession()
+    </script>
+</body>
+</html>
