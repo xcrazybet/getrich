@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>🔐 Auth Test</h1>
+    
+    <div style="padding:20px; background:#e8f4fd; border-radius:10px;">
+        <h3>Test Registration</h3>
+        Email: <input type="email" id="email" placeholder="test@test.com"><br>
+        Password: <input type="password" id="password" placeholder="password123"><br>
+        <button onclick="signUp()">Sign Up</button>
+        <button onclick="signIn()">Sign In</button>
+        <button onclick="checkUser()">Check User</button>
+    </div>
+    
+    <div id="output" style="margin-top:20px; padding:15px; background:#f9f9f9; border:1px solid #ddd;"></div>
+    
+    <script>
+        const supabaseUrl = 'https://vhahsqxbkuoumvsjotue.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhzcXhia3VvdW12c2pvdHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8'
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+        
+        function log(msg) {
+            document.getElementById('output').innerHTML += msg + '<br>'
+            console.log(msg)
+        }
+        
+        function clearLog() {
+            document.getElementById('output').innerHTML = ''
+        }
+        
+        async function signUp() {
+            clearLog()
+            const email = document.getElementById('email').value || 'test' + Date.now() + '@test.com'
+            const password = document.getElementById('password').value || 'password123'
+            
+            log('📝 Signing up: ' + email)
+            
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        full_name: 'Test User',
+                        username: 'user' + Date.now()
+                    }
+                }
+            })
+            
+            if (error) {
+                log('❌ Error: ' + error.message)
+            } else {
+                log('✅ User created: ' + data.user.email)
+                log('🔍 Check Supabase Dashboard → Authentication → Users')
+            }
+        }
+        
+        async function signIn() {
+            clearLog()
+            const email = document.getElementById('email').value || 'test@test.com'
+            const password = document.getElementById('password').value || 'password123'
+            
+            log('🔑 Signing in: ' + email)
+            
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            })
+            
+            if (error) {
+                log('❌ Error: ' + error.message)
+            } else {
+                log('✅ Signed in as: ' + data.user.email)
+                log('User ID: ' + data.user.id)
+            }
+        }
+        
+        async function checkUser() {
+            clearLog()
+            const { data: { user } } = await supabase.auth.getUser()
+            
+            if (user) {
+                log('✅ Current user: ' + user.email)
+                log('ID: ' + user.id)
+            } else {
+                log('ℹ️ No user logged in')
+            }
+        }
+        
+        // Check on load
+        checkUser()
+    </script>
+</body>
+</html>
