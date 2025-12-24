@@ -1,1 +1,197 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet - GetRich Betting</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-coins"></i>
+                <span>GetRich</span>
+            </a>
+            <div class="nav-links">
+                <a href="sports.html"><i class="fas fa-futbol"></i> Sports</a>
+                <a href="my-bets.html"><i class="fas fa-ticket-alt"></i> My Bets</a>
+                <a href="wallet.html" class="active"><i class="fas fa-wallet"></i> Wallet</a>
+                <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
+                <button onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="wallet-header">
+            <h1><i class="fas fa-wallet"></i> My Wallet</h1>
+            <div class="balance-card">
+                <div class="balance-amount">
+                    <span class="label">Available Balance</span>
+                    <span id="wallet-balance" class="amount">$0.00</span>
+                </div>
+                <div class="balance-amount">
+                    <span class="label">Locked in Bets</span>
+                    <span id="locked-balance" class="amount locked">$0.00</span>
+                </div>
+                <div class="balance-amount">
+                    <span class="label">Total Balance</span>
+                    <span id="total-balance" class="amount total">$0.00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="wallet-actions">
+            <div class="action-card" onclick="showDepositModal()">
+                <div class="action-icon deposit">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h3>Deposit</h3>
+                <p>Add funds to your wallet</p>
+            </div>
+            
+            <div class="action-card" onclick="showWithdrawModal()">
+                <div class="action-icon withdraw">
+                    <i class="fas fa-minus-circle"></i>
+                </div>
+                <h3>Withdraw</h3>
+                <p>Cash out your winnings</p>
+            </div>
+            
+            <div class="action-card" onclick="showTransactions()">
+                <div class="action-icon history">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3>History</h3>
+                <p>View all transactions</p>
+            </div>
+        </div>
+        
+        <!-- Transactions History -->
+        <div class="transactions-section">
+            <h2>Recent Transactions</h2>
+            <div class="transactions-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-list">
+                        <!-- Transactions will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Deposit Modal -->
+    <div id="deposit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deposit-modal')">&times;</span>
+            <h2>Deposit Funds</h2>
+            
+            <div class="form-group">
+                <label for="deposit-amount">Amount ($)</label>
+                <input type="number" id="deposit-amount" min="10" step="0.01" placeholder="Minimum $10">
+                <small id="deposit-limits">Min: $10, Max: $10,000</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Payment Method</label>
+                <div class="payment-methods">
+                    <div class="payment-method active" data-method="bank">
+                        <i class="fas fa-university"></i>
+                        <span>Bank Transfer</span>
+                    </div>
+                    <div class="payment-method" data-method="crypto">
+                        <i class="fab fa-bitcoin"></i>
+                        <span>Crypto</span>
+                    </div>
+                    <div class="payment-method" data-method="card">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Credit Card</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-primary btn-block" onclick="processDeposit()">Submit Deposit Request</button>
+            <p class="note">Deposits require admin approval. Usually processed within 24 hours.</p>
+        </div>
+    </div>
+    
+    <!-- Withdraw Modal -->
+    <div id="withdraw-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('withdraw-modal')">&times;</span>
+            <h2>Withdraw Funds</h2>
+            
+            <div class="form-group">
+                <label for="withdraw-amount">Amount ($)</label>
+                <input type="number" id="withdraw-amount" min="20" step="0.01" placeholder="Minimum $20">
+                <small>Available: $<span id="available-balance">0.00</span></small>
+            </div>
+            
+            <div class="form-group">
+                <label for="withdraw-method">Withdrawal Method</label>
+                <select id="withdraw-method">
+                    <option value="bank">Bank Transfer</option>
+                    <option value="crypto">Crypto Wallet</option>
+                    <option value="paypal">PayPal</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="account-details" style="display: none;">
+                <label for="account-info">Account Details</label>
+                <textarea id="account-info" placeholder="Enter your account number, wallet address, or PayPal email"></textarea>
+            </div>
+            
+            <div class="fee-notice">
+                <i class="fas fa-info-circle"></i>
+                <span>Withdrawal fee: $2.00. Processing time: 1-3 business days.</span>
+            </div>
+            
+            <button class="btn-primary btn-block" onclick="processWithdrawal()">Submit Withdrawal Request</button>
+        </div>
+    </div>
+    
+    <!-- Loading overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+    
+    <script type="module">
+        import { supabase } from './js/supabase.js'
+        window.supabase = supabase
+        
+        // Initialize wallet
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth()
+            await loadWalletData()
+            await loadTransactions()
+            
+            // Show modals on click
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.addEventListener('click', function() {
+                    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'))
+                    this.classList.add('active')
+                })
+            })
+            
+            document.getElementById('withdraw-method').addEventListener('change', function() {
+                document.getElementById('account-details').style.display = 
+                    this.value ? 'block' : 'none'
+            })
+        })
+    </script>
+    <script src="js/auth.js"></script>
+    <script src="js/wallet.js"></script>
+</body>
+</html>
