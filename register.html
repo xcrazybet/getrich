@@ -10,53 +10,90 @@
 <body>
     <div class="auth-container">
         <div class="auth-box">
-            <div class="logo">
+            <div class="logo-header">
                 <i class="fas fa-coins"></i>
-                <h1>GetRich Betting</h1>
+                <h1>GetRich</h1>
+                <p class="tagline">Start Your Betting Journey</p>
             </div>
             
-            <div id="auth-form">
+            <div class="auth-form active">
                 <h2>Create Account</h2>
+                <p class="form-subtitle">Join thousands winning on GetRich</p>
                 
                 <div class="form-group">
-                    <label for="full_name">Full Name</label>
-                    <input type="text" id="full_name" placeholder="Enter your full name">
+                    <label for="fullname"><i class="fas fa-user"></i> Full Name *</label>
+                    <input type="text" id="fullname" placeholder="Enter your full name" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Enter your email">
+                    <label for="email"><i class="fas fa-envelope"></i> Email Address *</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Choose a username">
+                    <label for="username"><i class="fas fa-at"></i> Username *</label>
+                    <input type="text" id="username" placeholder="Choose a username" required>
+                    <small class="form-help">This will be your public display name</small>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Password *</label>
+                        <input type="password" id="password" placeholder="Create password" required>
+                        <div class="password-toggle" onclick="togglePassword('password')">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm-password"><i class="fas fa-lock"></i> Confirm Password *</label>
+                        <input type="password" id="confirm-password" placeholder="Confirm password" required>
+                        <div class="password-toggle" onclick="togglePassword('confirm-password')">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Create a password (min. 8 chars)">
+                    <label for="phone"><i class="fas fa-phone"></i> Phone Number (Optional)</label>
+                    <input type="tel" id="phone" placeholder="+1 (123) 456-7890">
+                    <small class="form-help">For withdrawal verification</small>
                 </div>
                 
-                <div class="form-group">
-                    <label for="confirm_password">Confirm Password</label>
-                    <input type="password" id="confirm_password" placeholder="Confirm your password">
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="age-verify" required>
+                    <label for="age-verify">I confirm I am 21 years or older *</label>
                 </div>
                 
                 <div class="form-group checkbox">
                     <input type="checkbox" id="terms" required>
-                    <label for="terms">I am 21+ and agree to Terms & Conditions</label>
+                    <label for="terms">I agree to the <a href="terms.html">Terms & Conditions</a> and <a href="#">Privacy Policy</a> *</label>
                 </div>
                 
-                <button class="btn-primary" onclick="register()">Create Account</button>
-                
-                <div class="auth-links">
-                    <p>Already have an account? <a href="login.html">Login</a></p>
-                    <p><a href="index.html">Back to Home</a></p>
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="marketing">
+                    <label for="marketing">Send me betting tips and promotions</label>
                 </div>
                 
-                <div id="auth-message" class="message"></div>
+                <div class="bonus-notice">
+                    <i class="fas fa-gift"></i>
+                    <div>
+                        <strong>Welcome Bonus!</strong>
+                        <p>Get $10 free credit on your first deposit!</p>
+                    </div>
+                </div>
+                
+                <button class="btn-primary btn-block" onclick="handleRegister()">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+                
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="login.html">Login here</a></p>
+                    <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+                </div>
             </div>
+            
+            <div id="auth-message" class="message"></div>
         </div>
     </div>
     
@@ -65,5 +102,312 @@
         window.supabase = supabase
     </script>
     <script src="js/auth.js"></script>
+    <script>
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId)
+            const icon = input.parentElement.querySelector('.password-toggle i')
+            
+            if (input.type === 'password') {
+                input.type = 'text'
+                icon.classList.remove('fa-eye')
+                icon.classList.add('fa-eye-slash')
+            } else {
+                input.type = 'password'
+                icon.classList.remove('fa-eye-slash')
+                icon.classList.add('fa-eye')
+            }
+        }
+        
+        // Handle registration
+        async function handleRegister() {
+            const fullname = document.getElementById('fullname').value
+            const email = document.getElementById('email').value
+            const username = document.getElementById('username').value
+            const password = document.getElementById('password').value
+            const confirmPassword = document.getElementById('confirm-password').value
+            const phone = document.getElementById('phone').value
+            const ageVerified = document.getElementById('age-verify').checked
+            const terms = document.getElementById('terms').checked
+            
+            const messageEl = document.getElementById('auth-message')
+            messageEl.textContent = ''
+            messageEl.className = 'message'
+            
+            // Validation
+            if (!fullname || !email || !username || !password || !confirmPassword) {
+                showMessage('Please fill in all required fields', 'error')
+                return
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match', 'error')
+                return
+            }
+            
+            if (password.length < 8) {
+                showMessage('Password must be at least 8 characters', 'error')
+                return
+            }
+            
+            if (!ageVerified) {
+                showMessage('You must be 21+ to register', 'error')
+                return
+            }
+            
+            if (!terms) {
+                showMessage('You must accept the terms and conditions', 'error')
+                return
+            }
+            
+            // Check username availability
+            showMessage('Checking username...', 'loading')
+            
+            const { data: existingUser } = await supabase
+                .from('profiles')
+                .select('username')
+                .eq('username', username)
+                .single()
+            
+            if (existingUser) {
+                showMessage('Username already taken. Please choose another.', 'error')
+                return
+            }
+            
+            // Create account
+            showMessage('Creating your account...', 'loading')
+            
+            try {
+                const userData = {
+                    full_name: fullname,
+                    username: username,
+                    phone: phone || null
+                }
+                
+                const result = await register(email, password, userData)
+                
+                if (result.user) {
+                    showMessage('✅ Account created successfully! Redirecting to login...', 'success')
+                    
+                    // Auto-login after 2 seconds
+                    setTimeout(async () => {
+                        try {
+                            await login(email, password)
+                            window.location.href = 'index.html'
+                        } catch (loginError) {
+                            window.location.href = 'login.html'
+                        }
+                    }, 2000)
+                } else {
+                    showMessage('Account created! Please check your email for verification.', 'success')
+                    setTimeout(() => {
+                        window.location.href = 'login.html'
+                    }, 3000)
+                }
+            } catch (error) {
+                showMessage('Registration failed: ' + error.message, 'error')
+            }
+        }
+        
+        // Show message
+        function showMessage(text, type = 'info') {
+            const messageEl = document.getElementById('auth-message')
+            messageEl.textContent = text
+            messageEl.className = `message ${type}`
+        }
+        
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session) {
+                window.location.href = 'index.html'
+            }
+        })
+    </script>
+    
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 20px;
+        }
+        
+        .auth-box {
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #475569;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-header i {
+            font-size: 3rem;
+            color: #60a5fa;
+            margin-bottom: 10px;
+        }
+        
+        .logo-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .tagline {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+        
+        .form-subtitle {
+            color: #94a3b8;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .form-help {
+            display: block;
+            margin-top: 5px;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 42px;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+        
+        .checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 15px 0;
+            cursor: pointer;
+        }
+        
+        .checkbox input {
+            margin-top: 5px;
+            width: auto;
+        }
+        
+        .checkbox label {
+            line-height: 1.5;
+        }
+        
+        .checkbox a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+        
+        .bonus-notice {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid #8b5cf6;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .bonus-notice i {
+            font-size: 1.5rem;
+            color: #8b5cf6;
+        }
+        
+        .bonus-notice strong {
+            color: #c4b5fd;
+        }
+        
+        .bonus-notice p {
+            color: #a78bfa;
+            margin: 5px 0 0;
+            font-size: 0.9rem;
+        }
+        
+        .btn-block {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #475569;
+        }
+        
+        .auth-footer p {
+            color: #94a3b8;
+            margin-bottom: 15px;
+        }
+        
+        .auth-footer a {
+            color: #60a5fa;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+        
+        .message.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid #22c55e;
+            color: #86efac;
+        }
+        
+        .message.loading {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+            color: #93c5fd;
+        }
+        
+        @media (max-width: 768px) {
+            .auth-box {
+                padding: 25px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
 </body>
 </html>
