@@ -1,23 +1,72 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>Quick Test</h1>
-    <div id="result">Testing...</div>
+    <h1>🚀 Final Connection Test</h1>
+    
+    <div id="status" style="padding:20px; background:#f0f0f0; border-radius:5px;">
+        Testing Supabase connection...
+    </div>
     
     <script>
-        // SUPER simple test
-        fetch('https://vhahagokkaonmytjette.supabase.co/auth/v1/settings', {
-            headers: {
-                'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8'
+        async function testConnection() {
+            const status = document.getElementById('status')
+            
+            try {
+                // Test 1: Basic connection
+                const response = await fetch('https://vhahagokkaonmytjette.supabase.co/auth/v1/health', {
+                    headers: {
+                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8',
+                        'Accept': 'application/json'
+                    },
+                    mode: 'cors'
+                })
+                
+                if (response.ok) {
+                    const data = await response.json()
+                    status.innerHTML = `
+                        <div style="color:green; font-weight:bold;">
+                            ✅ SUCCESS! Supabase is responding.
+                        </div>
+                        <div style="margin-top:10px;">
+                            Status: ${data.name || 'Healthy'}<br>
+                            Version: ${data.version || '1.0'}
+                        </div>
+                        <div style="margin-top:20px; color:green;">
+                            🎉 URLs are correct! CORS should work now.
+                        </div>
+                    `
+                    status.style.backgroundColor = '#d4edda'
+                    
+                } else {
+                    status.innerHTML = `
+                        <div style="color:orange;">
+                            ⚠️ Got response but with status: ${response.status}
+                        </div>
+                    `
+                    status.style.backgroundColor = '#fff3cd'
+                }
+                
+            } catch (error) {
+                status.innerHTML = `
+                    <div style="color:red; font-weight:bold;">
+                        ❌ NETWORK ERROR: ${error.message}
+                    </div>
+                    <div style="margin-top:10px; color:#666;">
+                        Make sure:<br>
+                        1. All 6 URLs are CHECKED ✅<br>
+                        2. You clicked SAVE button<br>
+                        3. Wait 30 seconds after saving
+                    </div>
+                `
+                status.style.backgroundColor = '#f8d7da'
             }
-        })
-        .then(response => {
-            document.getElementById('result').innerHTML = 
-                response.ok ? '✅ Supabase is accessible!' : '❌ Cannot access Supabase'
-        })
-        .catch(error => {
-            document.getElementById('result').innerHTML = '❌ Error: ' + error.message
-        })
+        }
+        
+        // Run test
+        testConnection()
+        
+        // Auto-retry after 30 seconds
+        setTimeout(testConnection, 30000)
     </script>
 </body>
 </html>
