@@ -1,192 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GetRich Betting</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        :root { --primary: #10b981; --secondary: #3b82f6; --dark: #0f172a; }
-        body { font-family: Arial; background: #0f172a; color: white; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 20px auto; background: #1e293b; padding: 20px; border-radius: 10px; }
-        h1 { color: #10b981; text-align: center; }
-        .btn { background: #3b82f6; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; }
-        #status { padding: 10px; background: #1e293b; border-radius: 5px; margin: 10px 0; text-align: center; }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>GetRich Test</title>
 </head>
 <body>
-    <div class="container">
-        <h1>🎰 GETRICH BETTING</h1>
-        <div id="status">Testing connection...</div>
-        
-        <div style="text-align: center;">
-            <button class="btn" onclick="testConnection()">Test Connection</button>
-            <button class="btn" onclick="checkTables()">Check Database</button>
-            <button class="btn" onclick="createTables()">Create Tables</button>
-        </div>
-        
-        <div id="result" style="margin-top: 20px; padding: 15px; background: #0f172a; border-radius: 5px;"></div>
-        
-        <div style="text-align: center; margin-top: 30px; color: #94a3b8; font-size: 12px;">
-            Project ID: <strong id="projectId">vhahsqxbkuoumvsjotue</strong>
-        </div>
-    </div>
-
+    <h1>GETRICH BETTING - TEST PAGE</h1>
+    <p>Project ID: <strong id="pid">vhahsqxbkuoumvsjotue</strong></p>
+    <p>Status: <span id="status">Loading...</span></p>
+    
     <script>
-        // YOUR EXACT CREDENTIALS
+        // Display correct project ID
+        document.getElementById('pid').textContent = 'vhahsqxbkuoumvsjotue';
+        
+        // Simple connection test
         const SUPABASE_URL = 'https://vhahsqxbkuoumvsjotue.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhzcXhia3VvdW12c2pvdHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        // Show project ID on page
-        document.getElementById('projectId').textContent = 'vhahsqxbkuoumvsjotue';
-        
-        async function testConnection() {
-            document.getElementById('status').innerHTML = 'Testing connection...';
-            document.getElementById('result').innerHTML = '';
-            
+        async function test() {
             try {
-                // Simple ping to Supabase
-                const { data, error } = await supabase.from('bets').select('count').limit(1);
-                
-                if (error) {
-                    if (error.message.includes('does not exist')) {
-                        document.getElementById('status').innerHTML = '✅ CONNECTED (but no bets table yet)';
-                        document.getElementById('result').innerHTML = 
-                            '<p style="color: #10b981;">✓ Supabase connection successful!</p>' +
-                            '<p>Next: Create the bets table</p>' +
-                            '<button class="btn" onclick="createTables()">Create Tables Now</button>';
-                    } else {
-                        throw error;
-                    }
-                } else {
-                    document.getElementById('status').innerHTML = '✅ FULLY CONNECTED';
-                    document.getElementById('result').innerHTML = 
-                        '<p style="color: #10b981;">✓ Connection successful! Database is ready.</p>' +
-                        '<button class="btn" onclick="checkTables()">View Data</button>';
-                }
-            } catch (error) {
-                document.getElementById('status').innerHTML = '❌ Connection Failed';
-                document.getElementById('result').innerHTML = 
-                    '<p style="color: #ef4444;">Error: ' + error.message + '</p>' +
-                    '<p>Check: 1. Are credentials correct? 2. Is Supabase project active?</p>';
-            }
-        }
-        
-        async function checkTables() {
-            document.getElementById('result').innerHTML = 'Checking database...';
-            
-            try {
-                const { data, error } = await supabase
-                    .from('bets')
-                    .select('*')
-                    .limit(5);
-                
-                if (error) throw error;
-                
-                if (data.length === 0) {
-                    document.getElementById('result').innerHTML = 
-                        '<p>No bets found. Add some sample data:</p>' +
-                        '<button class="btn" onclick="addSampleData()">Add Sample Bets</button>';
-                } else {
-                    let html = '<h3>Current Bets:</h3>';
-                    data.forEach(bet => {
-                        html += `<p>🎯 ${bet.game_name} - $${bet.bet_amount} (${bet.status})</p>`;
-                    });
-                    document.getElementById('result').innerHTML = html;
-                }
-            } catch (error) {
-                document.getElementById('result').innerHTML = 
-                    '<p>Error: ' + error.message + '</p>' +
-                    '<button class="btn" onclick="createTables()">Create Missing Tables</button>';
-            }
-        }
-        
-        async function createTables() {
-            document.getElementById('result').innerHTML = 'Creating tables... (This may take a moment)';
-            
-            // We'll use SQL to create table
-            try {
-                // Create table via REST API
                 const response = await fetch(SUPABASE_URL + '/rest/v1/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY,
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify({
-                        query: `
-                            CREATE TABLE IF NOT EXISTS bets (
-                                id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-                                game_name TEXT NOT NULL,
-                                bet_amount DECIMAL(10,2) NOT NULL,
-                                odds DECIMAL(5,2) DEFAULT 1.0,
-                                status TEXT DEFAULT 'pending',
-                                created_at TIMESTAMPTZ DEFAULT NOW()
-                            );
-                            
-                            INSERT INTO bets (game_name, bet_amount, odds, status) VALUES
-                            ('Football: Real Madrid vs Barcelona', 50.00, 2.5, 'pending'),
-                            ('Basketball: Lakers vs Celtics', 25.00, 1.8, 'won');
-                        `
-                    })
+                    headers: { 'apikey': SUPABASE_KEY }
                 });
                 
                 if (response.ok) {
-                    document.getElementById('result').innerHTML = 
-                        '<p style="color: #10b981;">✅ Tables created successfully!</p>' +
-                        '<p>Sample bets added to database.</p>' +
-                        '<button class="btn" onclick="checkTables()">View Data</button>';
-                    
-                    // Update status
-                    document.getElementById('status').innerHTML = '✅ DATABASE READY';
+                    document.getElementById('status').innerHTML = 
+                        '<span style="color: green;">✅ CONNECTED TO SUPABASE</span>';
                 } else {
-                    const errorText = await response.text();
-                    document.getElementById('result').innerHTML = 
-                        '<p style="color: #ef4444;">Table creation failed. Please create manually:</p>' +
-                        '<p>1. Go to Supabase Dashboard → SQL Editor</p>' +
-                        '<p>2. Run this SQL:</p>' +
-                        '<pre style="background: #0f172a; padding: 10px; border-radius: 5px;">' +
-                        'CREATE TABLE bets (\n' +
-                        '    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,\n' +
-                        '    game_name TEXT NOT NULL,\n' +
-                        '    bet_amount DECIMAL(10,2) NOT NULL,\n' +
-                        '    odds DECIMAL(5,2) DEFAULT 1.0,\n' +
-                        '    status TEXT DEFAULT \'pending\',\n' +
-                        '    created_at TIMESTAMPTZ DEFAULT NOW()\n' +
-                        ');</pre>';
+                    document.getElementById('status').innerHTML = 
+                        '<span style="color: red;">❌ Connection failed</span>';
                 }
             } catch (error) {
-                document.getElementById('result').innerHTML = 
-                    '<p style="color: #ef4444;">Error: ' + error.message + '</p>' +
-                    '<p>We need to create tables manually in Supabase.</p>';
+                document.getElementById('status').innerHTML = 
+                    '<span style="color: red;">❌ Error: ' + error.message + '</span>';
             }
         }
         
-        async function addSampleData() {
-            try {
-                const { error } = await supabase
-                    .from('bets')
-                    .insert([
-                        { game_name: 'Tennis: Djokovic vs Nadal', bet_amount: 100, odds: 3.2, status: 'pending' },
-                        { game_name: 'Esports: CS2 Tournament', bet_amount: 75, odds: 4.0, status: 'lost' }
-                    ]);
-                
-                if (error) throw error;
-                
-                document.getElementById('result').innerHTML = 
-                    '<p style="color: #10b981;">✅ Sample bets added!</p>';
-                checkTables();
-            } catch (error) {
-                document.getElementById('result').innerHTML = 
-                    '<p>Error: ' + error.message + '</p>';
-            }
-        }
-        
-        // Test connection on page load
-        document.addEventListener('DOMContentLoaded', testConnection);
+        test();
     </script>
 </body>
 </html>
