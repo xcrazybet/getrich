@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>🔄 Correct URL Test</h1>
+    <h1>🔗 EXACT URL Test</h1>
     
-    <div id="result" style="padding:20px; background:#f0f0f0;">
-        Testing with CORRECT URL...
+    <div id="result" style="padding:20px; background:#f5f5f5; font-family:monospace;">
+        Testing EXACT URL from your credentials...
     </div>
     
     <script>
+        // EXACT URL from YOUR credentials
+        const EXACT_URL = 'https://vhahagokkaonmytjette.supabase.co'
+        const EXACT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8'
+        
+        document.getElementById('result').innerHTML = 
+            'Testing URL: <br><strong>' + EXACT_URL + '</strong><br><br>' +
+            'API Key: <br><small>' + EXACT_KEY.substring(0, 50) + '...</small><br><br>' +
+            'Connecting...'
+        
         async function test() {
-            const result = document.getElementById('result')
-            
-            // CORRECT URL with the missing 't'
-            const correctUrl = 'https://vhahagokkaonmytjette.supabase.co'
-            
             try {
-                const response = await fetch(correctUrl + '/rest/v1/', {
+                const response = await fetch(EXACT_URL + '/rest/v1/', {
                     headers: {
-                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8'
+                        'apikey': EXACT_KEY,
+                        'Accept': 'application/json'
                     }
                 })
                 
+                const result = document.getElementById('result')
+                
                 if (response.ok) {
-                    result.innerHTML = '✅ SUCCESS! Connected to Supabase!<br><br>'
-                    result.innerHTML += 'Correct URL: ' + correctUrl + '<br>'
-                    result.innerHTML += 'Status: ' + response.status
+                    result.innerHTML += '<br><span style="color:green; font-weight:bold;">✅ SUCCESS! Connected!</span>'
                     result.style.backgroundColor = '#d4edda'
                 } else {
-                    result.innerHTML = '❌ Error: ' + response.status
+                    result.innerHTML += '<br><span style="color:red;">❌ Error: Status ' + response.status + '</span>'
                     result.style.backgroundColor = '#f8d7da'
                 }
             } catch (error) {
-                result.innerHTML = '❌ Network Error: ' + error.message + '<br><br>'
-                result.innerHTML += 'Trying: ' + correctUrl
-                result.style.backgroundColor = '#f8d7da'
+                document.getElementById('result').innerHTML += 
+                    '<br><span style="color:red; font-weight:bold;">❌ Network Error: ' + error.message + '</span>'
+                document.getElementById('result').style.backgroundColor = '#f8d7da'
             }
         }
         
