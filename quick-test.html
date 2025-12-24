@@ -1,72 +1,43 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>🚀 Final Connection Test</h1>
+    <h1>🔄 Correct URL Test</h1>
     
-    <div id="status" style="padding:20px; background:#f0f0f0; border-radius:5px;">
-        Testing Supabase connection...
+    <div id="result" style="padding:20px; background:#f0f0f0;">
+        Testing with CORRECT URL...
     </div>
     
     <script>
-        async function testConnection() {
-            const status = document.getElementById('status')
+        async function test() {
+            const result = document.getElementById('result')
+            
+            // CORRECT URL with the missing 't'
+            const correctUrl = 'https://vhahagokkaonmytjette.supabase.co'
             
             try {
-                // Test 1: Basic connection
-                const response = await fetch('https://vhahagokkaonmytjette.supabase.co/auth/v1/health', {
+                const response = await fetch(correctUrl + '/rest/v1/', {
                     headers: {
-                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8',
-                        'Accept': 'application/json'
-                    },
-                    mode: 'cors'
+                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8'
+                    }
                 })
                 
                 if (response.ok) {
-                    const data = await response.json()
-                    status.innerHTML = `
-                        <div style="color:green; font-weight:bold;">
-                            ✅ SUCCESS! Supabase is responding.
-                        </div>
-                        <div style="margin-top:10px;">
-                            Status: ${data.name || 'Healthy'}<br>
-                            Version: ${data.version || '1.0'}
-                        </div>
-                        <div style="margin-top:20px; color:green;">
-                            🎉 URLs are correct! CORS should work now.
-                        </div>
-                    `
-                    status.style.backgroundColor = '#d4edda'
-                    
+                    result.innerHTML = '✅ SUCCESS! Connected to Supabase!<br><br>'
+                    result.innerHTML += 'Correct URL: ' + correctUrl + '<br>'
+                    result.innerHTML += 'Status: ' + response.status
+                    result.style.backgroundColor = '#d4edda'
                 } else {
-                    status.innerHTML = `
-                        <div style="color:orange;">
-                            ⚠️ Got response but with status: ${response.status}
-                        </div>
-                    `
-                    status.style.backgroundColor = '#fff3cd'
+                    result.innerHTML = '❌ Error: ' + response.status
+                    result.style.backgroundColor = '#f8d7da'
                 }
-                
             } catch (error) {
-                status.innerHTML = `
-                    <div style="color:red; font-weight:bold;">
-                        ❌ NETWORK ERROR: ${error.message}
-                    </div>
-                    <div style="margin-top:10px; color:#666;">
-                        Make sure:<br>
-                        1. All 6 URLs are CHECKED ✅<br>
-                        2. You clicked SAVE button<br>
-                        3. Wait 30 seconds after saving
-                    </div>
-                `
-                status.style.backgroundColor = '#f8d7da'
+                result.innerHTML = '❌ Network Error: ' + error.message + '<br><br>'
+                result.innerHTML += 'Trying: ' + correctUrl
+                result.style.backgroundColor = '#f8d7da'
             }
         }
         
-        // Run test
-        testConnection()
-        
-        // Auto-retry after 30 seconds
-        setTimeout(testConnection, 30000)
+        test()
     </script>
 </body>
 </html>
