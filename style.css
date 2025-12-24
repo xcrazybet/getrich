@@ -1,8 +1,347 @@
-/* Additional global styles */
-:root {
-    --primary: #10b981;
-    --primary-dark: #059669;
-    --gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+/* ===== BASE STYLES ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Add to existing styles */
+body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #334155;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #60a5fa;
+    text-decoration: none;
+}
+
+.logo i {
+    font-size: 1.8rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
+.nav-links a {
+    color: #cbd5e1;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background: rgba(96, 165, 250, 0.1);
+    color: #60a5fa;
+}
+
+.btn-logout {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+}
+
+.btn-secondary {
+    background: #334155;
+    color: #cbd5e1;
+    border: 1px solid #475569;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* ===== CARDS ===== */
+.card {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid #475569;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.event-card {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid #475569;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s;
+}
+
+.event-card:hover {
+    transform: translateY(-3px);
+    border-color: #60a5fa;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== FORMS ===== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    background: #1e293b;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #60a5fa;
+}
+
+/* ===== WALLET ===== */
+.balance-card {
+    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 30px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.balance-amount {
+    text-align: center;
+}
+
+.balance-amount .label {
+    display: block;
+    color: #93c5fd;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.balance-amount .amount {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+}
+
+.balance-amount .locked {
+    color: #fbbf24;
+}
+
+.balance-amount .total {
+    color: #34d399;
+}
+
+/* ===== BETTING ===== */
+.odds-button {
+    background: rgba(30, 41, 59, 0.8);
+    border: 2px solid #475569;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex: 1;
+    text-align: center;
+}
+
+.odds-button:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: #60a5fa;
+}
+
+.odds-button.selected {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-color: #10b981;
+}
+
+/* ===== MODALS ===== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background: #1e293b;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid #475569;
+}
+
+.close {
+    color: #94a3b8;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: white;
+}
+
+/* ===== TABLES ===== */
+.table-container {
+    background: rgba(30, 41, 59, 0.7);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #475569;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+    color: #94a3b8;
+    font-weight: 600;
+    border-bottom: 1px solid #475569;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #334155;
+}
+
+tr:hover {
+    background: rgba(51, 65, 85, 0.3);
+}
+
+/* ===== STATUS BADGES ===== */
+.badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-won {
+    background: #10b981;
+    color: white;
+}
+
+.badge-lost {
+    background: #ef4444;
+    color: white;
+}
+
+.badge-active {
+    background: #3b82f6;
+    color: white;
+}
+
+.badge-pending {
+    background: #f59e0b;
+    color: white;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .nav-links {
+        gap: 10px;
+    }
+    
+    .nav-links a {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .balance-card {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .odds-button {
+        padding: 10px 15px;
+        font-size: 1rem;
+    }
+}
