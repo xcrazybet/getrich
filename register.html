@@ -33,6 +33,29 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .back-home {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ffcc00;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: rgba(255, 204, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .back-home:hover {
+            background-color: rgba(255, 204, 0, 0.2);
+            transform: translateY(-50%) translateX(-5px);
         }
         
         .header h1 {
@@ -65,6 +88,27 @@
         .welcome-banner p {
             font-size: 1.1rem;
             opacity: 0.9;
+        }
+        
+        .balance-display {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .balance-display i {
+            font-size: 1.5rem;
+        }
+        
+        .balance-display span {
+            font-size: 1.8rem;
+            font-weight: bold;
         }
         
         .form-container {
@@ -106,9 +150,21 @@
             color: #aaa;
         }
         
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1rem;
+        }
+        
         input, select {
             width: 100%;
-            padding: 15px 15px 15px 45px;
+            padding: 15px 45px 15px 45px;
             border-radius: 10px;
             border: 2px solid rgba(255, 255, 255, 0.1);
             background-color: rgba(255, 255, 255, 0.1);
@@ -270,6 +326,26 @@
             padding-left: 5px;
         }
         
+        .password-strength {
+            margin-top: 5px;
+            height: 5px;
+            border-radius: 3px;
+            background-color: #444;
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .password-strength-text {
+            font-size: 0.8rem;
+            margin-top: 3px;
+            text-align: right;
+        }
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -285,6 +361,18 @@
                 padding: 10px;
             }
             
+            .back-home {
+                position: relative;
+                display: inline-block;
+                margin-bottom: 15px;
+                left: 0;
+                transform: none;
+            }
+            
+            .header {
+                margin-bottom: 20px;
+            }
+            
             .header h1 {
                 font-size: 2rem;
             }
@@ -298,7 +386,7 @@
             }
             
             input, select {
-                padding: 14px 14px 14px 40px;
+                padding: 14px 45px 14px 40px;
             }
         }
         
@@ -330,6 +418,9 @@
     
     <div class="container">
         <div class="header">
+            <a href="#" class="back-home" id="backHome">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
             <h1>#GetRich</h1>
             <p>Start Your Betting Journey</p>
         </div>
@@ -337,6 +428,11 @@
         <div class="welcome-banner">
             <h2>Welcome Bones!</h2>
             <p>Get $100 free credit on your first deposit!</p>
+        </div>
+        
+        <div class="balance-display">
+            <i class="fas fa-wallet"></i>
+            <span>$0.00 Welcome Bonus</span>
         </div>
         
         <div class="form-container">
@@ -370,6 +466,34 @@
                     </div>
                     <div class="username-note">This will be your public display name.</div>
                     <div class="error-message" id="usernameError">Username must be at least 3 characters</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                    </div>
+                    <div class="password-strength-text" id="passwordStrengthText">Password strength: None</div>
+                    <div class="error-message" id="passwordError">Password must be at least 8 characters with uppercase, lowercase, and number</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                        <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="error-message" id="confirmPasswordError">Passwords do not match</div>
                 </div>
                 
                 <div class="form-group">
@@ -414,7 +538,8 @@
         
         <div class="success-message" id="successMessage">
             <h3><i class="fas fa-check-circle"></i> Account Created Successfully!</h3>
-            <p>Your account has been created and your details have been saved.</p>
+            <p>Your account has been created with $0.00 welcome bonus.</p>
+            <p>Make your first deposit to receive $100 free credit!</p>
             <p>Welcome to GetRich! Redirecting to your dashboard...</p>
         </div>
         
@@ -425,29 +550,78 @@
 
     <script>
         // ============================================
-        // FIXED SUPABASE CONFIGURATION
+        // SUPABASE CONFIGURATION - REPLACE WITH YOUR OWN
         // ============================================
-        // Using a public demo Supabase project for testing
-        // Replace with your own Supabase URL and key in production
         const SUPABASE_URL = 'https://your-project.supabase.co'; // REPLACE WITH YOUR URL
-        const SUPABASE_ANON_KEY = 'your-anon-key'; // REPLACE WITH YOUR KEY
+        const SUPABASE_ANON_KEY = 'your-anon-key'; // REPLARE WITH YOUR KEY
         
-        // DEMO MODE - Set to true to test without Supabase
-        const DEMO_MODE = true;
-        
-        // Initialize Supabase client (only if not in demo mode)
-        let supabaseClient = null;
-        if (!DEMO_MODE && SUPABASE_URL && SUPABASE_ANON_KEY && 
-            SUPABASE_URL !== 'https://your-project.supabase.co' && 
-            SUPABASE_ANON_KEY !== 'your-anon-key') {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        }
+        // Initialize Supabase client
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // DOM Elements
         const registerForm = document.getElementById('registerForm');
         const successMessage = document.getElementById('successMessage');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const submitBtn = document.getElementById('submitBtn');
+        const backHomeBtn = document.getElementById('backHome');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const toggleConfirmPasswordBtn = document.getElementById('toggleConfirmPassword');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const passwordStrengthBar = document.getElementById('passwordStrengthBar');
+        const passwordStrengthText = document.getElementById('passwordStrengthText');
+        
+        // Generate unique transaction ID
+        function generateTransactionId() {
+            const timestamp = Date.now();
+            const random = Math.floor(Math.random() * 1000000);
+            return `TXN${timestamp}${random}`.substring(0, 20);
+        }
+        
+        // Generate user ID
+        function generateUserId() {
+            return 'USER' + Date.now() + Math.floor(Math.random() * 1000);
+        }
+        
+        // Check password strength
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            let text = '';
+            let color = '';
+            
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            switch(strength) {
+                case 0:
+                case 1:
+                    text = 'Very Weak';
+                    color = '#ff5555';
+                    break;
+                case 2:
+                    text = 'Weak';
+                    color = '#ff9955';
+                    break;
+                case 3:
+                    text = 'Fair';
+                    color = '#ffcc00';
+                    break;
+                case 4:
+                    text = 'Strong';
+                    color = '#99ff99';
+                    break;
+                case 5:
+                    text = 'Very Strong';
+                    color = '#00cc00';
+                    break;
+            }
+            
+            const width = (strength / 5) * 100;
+            return { width, text, color };
+        }
         
         // Form validation
         function validateForm() {
@@ -480,6 +654,21 @@
                 isValid = false;
             }
             
+            // Password validation
+            const password = document.getElementById('password').value;
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+            if (!passwordRegex.test(password)) {
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Confirm password validation
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                isValid = false;
+            }
+            
             // Age confirmation
             if (!document.getElementById('ageConfirm').checked) {
                 document.getElementById('ageError').style.display = 'block';
@@ -495,59 +684,116 @@
             return isValid;
         }
         
-        // Save user data to Supabase (or localStorage in demo mode)
-        async function saveUserData(userData) {
-            // If in demo mode, save to localStorage
-            if (DEMO_MODE) {
-                try {
-                    // Get existing users or initialize empty array
-                    const existingUsers = JSON.parse(localStorage.getItem('getrich_users') || '[]');
-                    
-                    // Add new user with ID
-                    userData.id = Date.now(); // Simple ID generation
-                    existingUsers.push(userData);
-                    
-                    // Save back to localStorage
-                    localStorage.setItem('getrich_users', JSON.stringify(existingUsers));
-                    
-                    // Simulate network delay
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    return { success: true, data: userData };
-                } catch (error) {
-                    console.error('Demo mode error:', error);
-                    return { success: false, error: 'Failed to save user data' };
-                }
-            }
-            
-            // Real Supabase save
-            if (!supabaseClient) {
-                return { 
-                    success: false, 
-                    error: 'Database not configured. Please set up Supabase or contact support.' 
-                };
-            }
-            
+        // Create user in Supabase Auth
+        async function createAuthUser(email, password, userData) {
             try {
-                // Insert user data into the 'users' table
-                const { data, error } = await supabaseClient
-                    .from('users')
-                    .insert([userData]);
-                    
-                if (error) {
-                    console.error('Supabase error:', error);
-                    return { 
-                        success: false, 
-                        error: error.message || 'Failed to create account. Please try again.' 
-                    };
-                }
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: userData.full_name,
+                            username: userData.username,
+                            phone: userData.phone
+                        }
+                    }
+                });
                 
+                if (error) throw error;
                 return { success: true, data: data };
             } catch (error) {
-                console.error('Error saving to Supabase:', error);
+                console.error('Auth error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+        
+        // Save user profile to Supabase
+        async function saveUserProfile(userId, userData) {
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .insert([{
+                        id: userId,
+                        full_name: userData.full_name,
+                        username: userData.username,
+                        email: userData.email,
+                        phone: userData.phone,
+                        is_over_21: userData.is_over_21,
+                        agreed_to_terms: userData.agreed_to_terms,
+                        receive_promotions: userData.receive_promotions,
+                        account_status: userData.account_status,
+                        balance: userData.balance,
+                        created_at: userData.created_at
+                    }]);
+                    
+                if (error) throw error;
+                return { success: true, data: data };
+            } catch (error) {
+                console.error('Profile error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+        
+        // Create initial transaction for user
+        async function createInitialTransaction(userId, transactionId) {
+            try {
+                const { data, error } = await supabase
+                    .from('transactions')
+                    .insert([{
+                        transaction_id: transactionId,
+                        user_id: userId,
+                        type: 'welcome_bonus',
+                        amount: 0.00,
+                        status: 'completed',
+                        description: 'Account created with $0.00 welcome bonus',
+                        created_at: new Date().toISOString()
+                    }]);
+                    
+                if (error) throw error;
+                return { success: true, data: data };
+            } catch (error) {
+                console.error('Transaction error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+        
+        // Save user data to Supabase
+        async function saveUserToDatabase(userData) {
+            try {
+                // Step 1: Create user in Supabase Auth
+                const authResult = await createAuthUser(userData.email, userData.password, userData);
+                if (!authResult.success) {
+                    return { success: false, error: authResult.error };
+                }
+                
+                const userId = authResult.data.user.id;
+                
+                // Step 2: Save user profile
+                const profileResult = await saveUserProfile(userId, userData);
+                if (!profileResult.success) {
+                    return { success: false, error: profileResult.error };
+                }
+                
+                // Step 3: Create initial transaction
+                const transactionId = generateTransactionId();
+                const transactionResult = await createInitialTransaction(userId, transactionId);
+                if (!transactionResult.success) {
+                    return { success: false, error: transactionResult.error };
+                }
+                
+                return { 
+                    success: true, 
+                    data: { 
+                        userId: userId,
+                        transactionId: transactionId,
+                        authData: authResult.data 
+                    } 
+                };
+            } catch (error) {
+                console.error('Database error:', error);
                 return { 
                     success: false, 
-                    error: 'Network error. Please check your connection and try again.' 
+                    error: error.message || 'Failed to create account. Please try again.' 
                 };
             }
         }
@@ -579,20 +825,21 @@
                 full_name: document.getElementById('fullName').value.trim(),
                 email: document.getElementById('email').value.trim(),
                 username: document.getElementById('username').value.trim(),
+                password: document.getElementById('password').value,
                 phone: document.getElementById('phone').value.trim() || null,
                 is_over_21: document.getElementById('ageConfirm').checked,
                 agreed_to_terms: document.getElementById('termsConfirm').checked,
                 receive_promotions: document.getElementById('promotions').checked,
                 created_at: new Date().toISOString(),
                 account_status: 'active',
-                free_credit_eligible: true
+                balance: 0.00 // Zero dollar welcome balance
             };
             
             // Show loading state
             showLoading();
             
-            // Save user data
-            const result = await saveUserData(userData);
+            // Save user data to Supabase
+            const result = await saveUserToDatabase(userData);
             
             // Hide loading state
             hideLoading();
@@ -602,22 +849,15 @@
                 successMessage.style.display = 'block';
                 registerForm.style.display = 'none';
                 
-                // Show demo mode notice if applicable
-                if (DEMO_MODE) {
-                    const demoNotice = document.createElement('div');
-                    demoNotice.className = 'promotion-note';
-                    demoNotice.style.marginTop = '20px';
-                    demoNotice.style.backgroundColor = 'rgba(0, 150, 255, 0.1)';
-                    demoNotice.style.borderColor = '#0096ff';
-                    demoNotice.innerHTML = '<p><i class="fas fa-info-circle"></i> <strong>Demo Mode:</strong> User saved to localStorage. In production, this would save to Supabase database.</p>';
-                    successMessage.parentNode.insertBefore(demoNotice, successMessage.nextSibling);
-                }
+                // Store user session
+                localStorage.setItem('getrich_user_id', result.data.userId);
+                localStorage.setItem('getrich_transaction_id', result.data.transactionId);
+                localStorage.setItem('getrich_user_email', userData.email);
+                localStorage.setItem('getrich_username', userData.username);
                 
-                // Simulate redirect after 3 seconds
+                // Redirect after 3 seconds
                 setTimeout(() => {
-                    // In a real app, you would redirect to dashboard
-                    console.log('Registration successful! User data:', userData);
-                    alert('Registration successful! Redirecting to dashboard... (In a real app, this would redirect to the user dashboard)');
+                    window.location.href = 'dashboard.html'; // Redirect to dashboard
                 }, 3000);
             } else {
                 // Show error message
@@ -642,6 +882,31 @@
             }
         });
         
+        // Password strength indicator
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strength = checkPasswordStrength(password);
+            
+            passwordStrengthBar.style.width = `${strength.width}%`;
+            passwordStrengthBar.style.backgroundColor = strength.color;
+            passwordStrengthText.textContent = `Password strength: ${strength.text}`;
+            passwordStrengthText.style.color = strength.color;
+        });
+        
+        // Toggle password visibility
+        togglePasswordBtn.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+        
+        // Toggle confirm password visibility
+        toggleConfirmPasswordBtn.addEventListener('click', function() {
+            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+        
         // Input validation on blur
         document.querySelectorAll('input').forEach(input => {
             input.addEventListener('blur', function() {
@@ -649,11 +914,10 @@
             });
         });
         
-        // Phone number formatting (optional enhancement)
+        // Phone number formatting
         document.getElementById('phone').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 0) {
-                // UK phone number formatting
                 if (value.startsWith('44')) {
                     if (value.length <= 2) {
                         value = `+${value}`;
@@ -665,7 +929,6 @@
                         value = `+${value.substring(0,2)} (${value.substring(2,5)}) ${value.substring(5,8)}-${value.substring(8,12)}`;
                     }
                 } else {
-                    // Generic formatting for other countries
                     if (value.length <= 3) {
                         value = `+${value}`;
                     } else if (value.length <= 6) {
@@ -680,24 +943,33 @@
             }
         });
         
-        // Initialize form with sample data for testing
+        // Back to home button
+        backHomeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'index.html'; // Redirect to home page
+        });
+        
+        // Initialize form
         window.addEventListener('DOMContentLoaded', function() {
+            // Check if Supabase is configured
+            if (SUPABASE_URL === 'https://your-project.supabase.co' || SUPABASE_ANON_KEY === 'your-anon-key') {
+                const configError = document.createElement('div');
+                configError.className = 'error-message';
+                configError.style.display = 'block';
+                configError.style.marginBottom = '15px';
+                configError.innerHTML = `
+                    <strong><i class="fas fa-exclamation-triangle"></i> Configuration Required:</strong> 
+                    Please update SUPABASE_URL and SUPABASE_ANON_KEY with your Supabase project credentials.
+                `;
+                document.querySelector('.form-container').insertBefore(configError, document.querySelector('.form-title'));
+            }
+            
             // Pre-fill with sample data for testing
             document.getElementById('fullName').value = 'John Smith';
             document.getElementById('email').value = 'john@example.com';
             document.getElementById('username').value = 'karker1';
-            
-            // Show Supabase configuration status
-            if (DEMO_MODE) {
-                console.log('Running in DEMO MODE - Data will be saved to localStorage');
-                const demoNotice = document.createElement('div');
-                demoNotice.className = 'promotion-note';
-                demoNotice.style.marginBottom = '15px';
-                demoNotice.style.backgroundColor = 'rgba(255, 165, 0, 0.1)';
-                demoNotice.style.borderColor = 'orange';
-                demoNotice.innerHTML = '<p><i class="fas fa-flask"></i> <strong>Demo Mode Active:</strong> User data will be saved to browser storage. Configure Supabase for real database.</p>';
-                document.querySelector('.form-container').insertBefore(demoNotice, document.querySelector('.form-title'));
-            }
+            document.getElementById('password').value = 'Test1234';
+            document.getElementById('confirmPassword').value = 'Test1234';
         });
     </script>
 </body>
