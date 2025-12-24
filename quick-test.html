@@ -1,48 +1,63 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>🔗 EXACT URL Test</h1>
+    <h1>🟢 COPY-PASTE TEST</h1>
+    <h3>Copy EXACTLY from below and paste into your file:</h3>
     
-    <div id="result" style="padding:20px; background:#f5f5f5; font-family:monospace;">
-        Testing EXACT URL from your credentials...
-    </div>
+    <textarea id="code" rows="10" cols="80" style="font-family:monospace; padding:10px;">
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>CORRECT TEST</h1>
+    <div id="result">Testing...</div>
     
     <script>
-        // EXACT URL from YOUR credentials
-        const EXACT_URL = 'https://vhahagokkaonmytjette.supabase.co'
-        const EXACT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8'
-        
-        document.getElementById('result').innerHTML = 
-            'Testing URL: <br><strong>' + EXACT_URL + '</strong><br><br>' +
-            'API Key: <br><small>' + EXACT_KEY.substring(0, 50) + '...</small><br><br>' +
-            'Connecting...'
+        // COPY-PASTE THESE EXACT LINES FROM YOUR ORIGINAL MESSAGE:
+        const supabaseUrl = 'https://vhahagokkaonmytjette.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8'
         
         async function test() {
             try {
-                const response = await fetch(EXACT_URL + '/rest/v1/', {
+                const response = await fetch(supabaseUrl + '/rest/v1/', {
                     headers: {
-                        'apikey': EXACT_KEY,
-                        'Accept': 'application/json'
+                        'apikey': supabaseKey
                     }
                 })
                 
-                const result = document.getElementById('result')
-                
                 if (response.ok) {
-                    result.innerHTML += '<br><span style="color:green; font-weight:bold;">✅ SUCCESS! Connected!</span>'
-                    result.style.backgroundColor = '#d4edda'
+                    document.getElementById('result').innerHTML = 
+                        '✅ SUCCESS! URL: ' + supabaseUrl
+                    document.getElementById('result').style.color = 'green'
                 } else {
-                    result.innerHTML += '<br><span style="color:red;">❌ Error: Status ' + response.status + '</span>'
-                    result.style.backgroundColor = '#f8d7da'
+                    document.getElementById('result').innerHTML = 
+                        '❌ Error: ' + response.status
+                    document.getElementById('result').style.color = 'red'
                 }
             } catch (error) {
-                document.getElementById('result').innerHTML += 
-                    '<br><span style="color:red; font-weight:bold;">❌ Network Error: ' + error.message + '</span>'
-                document.getElementById('result').style.backgroundColor = '#f8d7da'
+                document.getElementById('result').innerHTML = 
+                    '❌ Network Error: ' + error.message
+                document.getElementById('result').style.color = 'red'
             }
         }
         
         test()
+    </script>
+</body>
+</html>
+    </textarea>
+    
+    <div style="margin-top:20px;">
+        <button onclick="copyCode()">Copy Code</button>
+        <p>Then create file and upload to GitHub.</p>
+    </div>
+    
+    <script>
+        function copyCode() {
+            const textarea = document.getElementById('code')
+            textarea.select()
+            document.execCommand('copy')
+            alert('Code copied! Paste into a new file.')
+        }
     </script>
 </body>
 </html>
