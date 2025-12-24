@@ -1,20 +1,16 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>🟢 COPY-PASTE TEST</h1>
-    <h3>Copy EXACTLY from below and paste into your file:</h3>
-    
-    <textarea id="code" rows="10" cols="80" style="font-family:monospace; padding:10px;">
-<!DOCTYPE html>
-<html>
-<body>
-    <h1>CORRECT TEST</h1>
-    <div id="result">Testing...</div>
+    <h1>WORKING TEST</h1>
+    <div id="result">Testing connection to NEW Supabase project...</div>
     
     <script>
-        // COPY-PASTE THESE EXACT LINES FROM YOUR ORIGINAL MESSAGE:
-        const supabaseUrl = 'https://vhahagokkaonmytjette.supabase.co'
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8'
+        // USE YOUR NEW PROJECT URL from screenshot:
+        const supabaseUrl = 'https://vhahsqxbkuoumvsjotue.supabase.co'
+        
+        // You need to get your NEW anon key from Supabase dashboard
+        // Go to: Settings → API → Project API keys → anon public
+        const supabaseKey = 'YOUR_NEW_KEY_HERE' // ← REPLACE THIS!
         
         async function test() {
             try {
@@ -26,11 +22,11 @@
                 
                 if (response.ok) {
                     document.getElementById('result').innerHTML = 
-                        '✅ SUCCESS! URL: ' + supabaseUrl
+                        '✅ SUCCESS! Connected to: ' + supabaseUrl
                     document.getElementById('result').style.color = 'green'
                 } else {
                     document.getElementById('result').innerHTML = 
-                        '❌ Error: ' + response.status
+                        '❌ Error: Status ' + response.status
                     document.getElementById('result').style.color = 'red'
                 }
             } catch (error) {
@@ -41,23 +37,6 @@
         }
         
         test()
-    </script>
-</body>
-</html>
-    </textarea>
-    
-    <div style="margin-top:20px;">
-        <button onclick="copyCode()">Copy Code</button>
-        <p>Then create file and upload to GitHub.</p>
-    </div>
-    
-    <script>
-        function copyCode() {
-            const textarea = document.getElementById('code')
-            textarea.select()
-            document.execCommand('copy')
-            alert('Code copied! Paste into a new file.')
-        }
     </script>
 </body>
 </html>
