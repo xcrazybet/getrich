@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Quick Test</h1>
+    <div id="result">Testing...</div>
+    
+    <script>
+        // SUPER simple test
+        fetch('https://vhahagokkaonmytjette.supabase.co/auth/v1/settings', {
+            headers: {
+                'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoYWhhZ29ra2Fvbm15dGpldHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1MjI0ODcsImV4cCI6MjA4MjA5ODQ4N30.SJwMFGtQRb_1YDf8Jy8gHJIomH8n8mx5jBPVPklNcW8'
+            }
+        })
+        .then(response => {
+            document.getElementById('result').innerHTML = 
+                response.ok ? '✅ Supabase is accessible!' : '❌ Cannot access Supabase'
+        })
+        .catch(error => {
+            document.getElementById('result').innerHTML = '❌ Error: ' + error.message
+        })
+    </script>
+</body>
+</html>
